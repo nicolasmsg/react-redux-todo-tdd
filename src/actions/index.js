@@ -15,7 +15,7 @@ const actions = {
       text,
     };
   },
-  
+
   deleteTodo(id) {
     return {
       type: types.DELETE_TODO,
@@ -29,6 +29,12 @@ const actions = {
     };
   },
 
+  inputChanged(inputText) {
+    return {
+      type: types.INPUT_CHANGED,
+      inputText,
+    };
+  },
 };
 
 export default actions;

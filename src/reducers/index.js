@@ -3,7 +3,10 @@ import types from '../constants/';
 export const initialState = {
   todos: [],
   deleted: {},
+  disableAddTodo: true,
+  disableUndelete: true,
 };
+
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -18,7 +21,9 @@ export const reducer = (state = initialState, action) => {
             text: action.text,
           },
         ],
+        disableAddTodo: true,
       };
+
     case types.DELETE_TODO:
       return {
         ...state,
@@ -28,16 +33,32 @@ export const reducer = (state = initialState, action) => {
           )),
         ],
         deleted: state.todos.filter(todo => todo.id === action.id)[0],
+        disableUndelete: false,
       };
+
     case types.UNDELETE_TODO:
       return {
+        ...state,
+        todos: [
+          ...state.todos,
+          state.deleted,
+        ],
+        deleted: {},
+        disableUndelete: true,
+      };
+
+    case types.INPUT_CHANGED:
+      if (action.inputText) {
+        return {
           ...state,
-          todos: [
-            ...state.todos,
-            state.deleted,
-          ],
-          deleted: {}, 
-        }
+          disableAddTodo: false,
+        };
+      }
+      return {
+        ...state,
+        disableAddTodo: true,
+      };
+
     default:
       return state;
   }

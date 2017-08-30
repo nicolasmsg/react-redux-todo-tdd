@@ -1,3 +1,5 @@
+/* global expect, it, describe */
+
 import types from '../constants/';
 import { reducer, initialState } from '.';
 
@@ -24,6 +26,8 @@ describe('Reducer', () => {
           },
         ],
         deleted: {},
+        disableAddTodo: true,
+        disableUndelete: true,
       };
 
       expect(reducer(undefined, action)).toEqual(expectedState);
@@ -40,6 +44,7 @@ describe('Reducer', () => {
           },
         ],
         deleted: {},
+        disableUndelete: true,
       };
 
       const action = {
@@ -49,42 +54,88 @@ describe('Reducer', () => {
 
       const expectedState = {
         todos: [],
-                deleted: {
-                    id: 1,
-                  text: todoText,
-                  },
-                };
-          
-                expect(reducer(startingState, action)).toEqual(expectedState);
-              });
-            });
-          
-            describe('Undelete todo', () => {
-              it('Should return the correct state', () => {
-                const startingState = {
-                  todos: [],
-                  deleted: {
-                    id: 1,
-                    text: todoText,
-                  },
-                };
-          
-                const action = {
-                  type: types.UNDELETE_TODO,
-                };
-          
-                const expectedState = {
-                  todos: [
-                    {
-                      id: 1,
-                      text: todoText,
-                    },
-                  ],
-                  deleted: {},
+        deleted: {
+          id: 1,
+          text: todoText,
+        },
+        disableUndelete: false,
       };
 
       expect(reducer(startingState, action)).toEqual(expectedState);
     });
   });
 
+  describe('Undelete todo', () => {
+    it('Should return the correct state', () => {
+      const startingState = {
+        todos: [],
+        deleted: {
+          id: 1,
+          text: todoText,
+        },
+        disableUndelete: false,
+      };
+
+      const action = {
+        type: types.UNDELETE_TODO,
+      };
+
+      const expectedState = {
+        todos: [
+          {
+            id: 1,
+            text: todoText,
+          },
+        ],
+        deleted: {},
+        disableUndelete: true,
+      };
+
+      expect(reducer(startingState, action)).toEqual(expectedState);
+    });
+  });
+
+  describe('Input change', () => {
+    it('Should return the correct state when no value entered', () => {
+      const startingState = {
+        todos: [],
+        deleted: {},
+        disableAddTodo: true,
+      };
+
+      const action = {
+        type: types.INPUT_CHANGED,
+        inputText: '',
+      };
+
+      const expectedState = {
+        todos: [],
+        deleted: {},
+        disableAddTodo: true,
+      };
+
+      expect(reducer(startingState, action)).toEqual(expectedState);
+    });
+
+    it('Should return the correct state when a value is entered', () => {
+      const startingState = {
+        todos: [],
+        deleted: {},
+        disableAddTodo: true,
+      };
+
+      const action = {
+        type: types.INPUT_CHANGED,
+        inputText: todoText,
+      };
+
+      const expectedState = {
+        todos: [],
+        deleted: {},
+        disableAddTodo: false,
+      };
+
+      expect(reducer(startingState, action)).toEqual(expectedState);
+    });
+  });
 });
